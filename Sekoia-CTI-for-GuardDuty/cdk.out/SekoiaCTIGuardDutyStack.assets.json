@@ -1,0 +1,32 @@
+{
+  "version": "21.0.0",
+  "files": {
+    "6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50": {
+      "source": {
+        "path": "asset.6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "af000486bf2ce54a90506b70c0f4f37e992a8ed73aaebb9a0b60b16e82d3616a": {
+      "source": {
+        "path": "SekoiaCTIGuardDutyStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "af000486bf2ce54a90506b70c0f4f37e992a8ed73aaebb9a0b60b16e82d3616a.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

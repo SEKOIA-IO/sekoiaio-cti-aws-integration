@@ -1,0 +1,142 @@
+{
+  "version": "21.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "SekoiaCTINetworkFirewallStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "SekoiaCTINetworkFirewallStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "SekoiaCTINetworkFirewallStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "SekoiaCTINetworkFirewallStack.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9d9735193a57e89d74ae69d0daed9ba07c143591f9265809f0a8d5234bc7e4a8.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "SekoiaCTINetworkFirewallStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "SekoiaCTINetworkFirewallStack.assets"
+      ],
+      "metadata": {
+        "/SekoiaCTINetworkFirewallStack/APIKEYParameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "APIKEYParameter"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/SEKOIA_CTI_Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SEKOIACTIBucket"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/CopySekoiaLambdaNetworkFirewallRole": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopySekoiaLambdaNetworkFirewallRole"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/CopySekoiaLambdaNetworkFirewallPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopySekoiaLambdaNetworkFirewallPolicy"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/UpdateSekoiaCTINetworkFirewallRole": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UpdateSekoiaCTINetworkFirewallRole"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/UpdateSekoiaCTINetworkFirewallPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UpdateSekoiaCTINetworkFirewallPolicy"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/SekoiaNetworkFirewallRuleGroup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SekoiaNetworkFirewallRuleGroup"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/SekoiaNetworkFirewallPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SekoiaNetworkFirewallPolicy"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/CopySEKOIALambdaGuardDuty": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopySEKOIALambdaGuardDuty"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/UpdateSEKOIACTINetworkFirewall": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UpdateSEKOIACTINetworkFirewall"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/invoke_lambda/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "invokelambda131C9579"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/invoke_lambda/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "invokelambdaCustomResourcePolicyD9F1A682"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/AWS679f53fac002430cb0da5b7982bd2287/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd22872D164C4C"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/SEKOIALambdaScheduler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SEKOIALambdaScheduler"
+          }
+        ],
+        "/SekoiaCTINetworkFirewallStack/LambdaPermissionInvoke": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaPermissionInvoke"
+          }
+        ]
+      },
+      "displayName": "SekoiaCTINetworkFirewallStack"
+    }
+  }
+}
