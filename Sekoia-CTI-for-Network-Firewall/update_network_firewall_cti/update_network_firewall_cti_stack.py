@@ -30,7 +30,9 @@ class SekoiaCTINetworkFirewallStack(Stack):
             bucket_name="sekoia-cti",
             access_control="Private",
             notification_configuration=s3.CfnBucket.NotificationConfigurationProperty(
-                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(event_bridge_enabled=True)
+                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(
+                    event_bridge_enabled=True
+                )
             ),
             public_access_block_configuration=s3.CfnBucket.PublicAccessBlockConfigurationProperty(
                 block_public_acls=True,
@@ -68,8 +70,16 @@ class SekoiaCTINetworkFirewallStack(Stack):
                 "Statement": [
                     {
                         "Effect": "Allow",
-                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-                        "Resource": "arn:aws:logs:" + self.region + ":" + self.account + ":log-group:/aws/lambda/*",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                        ],
+                        "Resource": "arn:aws:logs:"
+                        + self.region
+                        + ":"
+                        + self.account
+                        + ":log-group:/aws/lambda/*",
                     },
                     {
                         "Effect": "Allow",
@@ -79,7 +89,7 @@ class SekoiaCTINetworkFirewallStack(Stack):
                 ],
             },
         )
-        
+
         update_lambda_role = iam.CfnRole(
             self,
             "UpdateSekoiaCTINetworkFirewallRole",
@@ -107,8 +117,16 @@ class SekoiaCTINetworkFirewallStack(Stack):
                 "Statement": [
                     {
                         "Effect": "Allow",
-                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-                        "Resource": "arn:aws:logs:" + self.region + ":" + self.account + ":log-group:/aws/lambda/*",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                        ],
+                        "Resource": "arn:aws:logs:"
+                        + self.region
+                        + ":"
+                        + self.account
+                        + ":log-group:/aws/lambda/*",
                     },
                     {
                         "Effect": "Allow",
@@ -139,7 +157,7 @@ class SekoiaCTINetworkFirewallStack(Stack):
                     rules_source_list=netfw.CfnRuleGroup.RulesSourceListProperty(
                         generated_rules_type="DENYLIST",
                         targets=["example.com"],
-                        target_types=["TLS_SNI","HTTP_HOST"]
+                        target_types=["TLS_SNI", "HTTP_HOST"],
                     )
                 )
             ),
@@ -150,7 +168,9 @@ class SekoiaCTINetworkFirewallStack(Stack):
             stateless_default_actions=["aws:forward_to_sfe"],
             stateless_fragment_default_actions=["aws:forward_to_sfe"],
             stateful_rule_group_references=[
-                netfw.CfnFirewallPolicy.StatefulRuleGroupReferenceProperty(resource_arn=rule_group.attr_rule_group_arn)
+                netfw.CfnFirewallPolicy.StatefulRuleGroupReferenceProperty(
+                    resource_arn=rule_group.attr_rule_group_arn
+                )
             ],
         )
 
@@ -195,7 +215,8 @@ def handler(event, context):
             self,
             "UpdateSEKOIACTINetworkFirewall",
             code=lambda_.CfnFunction.CodeProperty(
-                s3_bucket=my_bucket.bucket_name, s3_key="sekoia-update-cti-network-firewall.zip"
+                s3_bucket=my_bucket.bucket_name,
+                s3_key="sekoia-update-cti-network-firewall.zip",
             ),
             role=update_lambda_role.attr_arn,
             runtime="python3.7",
@@ -233,7 +254,9 @@ def handler(event, context):
                     "FunctionName": copy_lambda.function_name,
                     "InvocationType": "Event",
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("JobSenderTriggerPhysicalId"),
+                physical_resource_id=cr.PhysicalResourceId.of(
+                    "JobSenderTriggerPhysicalId"
+                ),
             ),
             on_update=cr.AwsSdkCall(
                 service="Lambda",
@@ -242,7 +265,9 @@ def handler(event, context):
                     "FunctionName": copy_lambda.function_name,
                     "InvocationType": "Event",
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("JobSenderTriggerPhysicalId"),
+                physical_resource_id=cr.PhysicalResourceId.of(
+                    "JobSenderTriggerPhysicalId"
+                ),
             ),
             function_name="CopyLambdaNetworkFirewallEvent",
         )
@@ -256,7 +281,11 @@ def handler(event, context):
             name="SEKOIALambdaSchedulerNetworkFirewall",
             state="ENABLED",
             schedule_expression="rate(10 minutes)",
-            targets=[events.CfnRule.TargetProperty(arn=update_lambda.attr_arn, id="UpdateSekoiaCTINetworkFirewall")],
+            targets=[
+                events.CfnRule.TargetProperty(
+                    arn=update_lambda.attr_arn, id="UpdateSekoiaCTINetworkFirewall"
+                )
+            ],
         )
 
         # Permissions

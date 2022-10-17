@@ -1,15 +1,12 @@
-from aws_cdk import (
-    Duration,
-    Stack,
-    aws_lambda as lambda_,
-    aws_s3 as s3,
-    aws_events as events,
-    aws_iam as iam,
-    aws_guardduty as gd,
-    custom_resources as cr,
-)
-from constructs import Construct
 import aws_cdk as cdk
+from aws_cdk import Duration, Stack
+from aws_cdk import aws_events as events
+from aws_cdk import aws_guardduty as gd
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_lambda as lambda_
+from aws_cdk import aws_s3 as s3
+from aws_cdk import custom_resources as cr
+from constructs import Construct
 
 
 class SekoiaCTIGuardDutyStack(Stack):
@@ -36,7 +33,9 @@ class SekoiaCTIGuardDutyStack(Stack):
             bucket_name="sekoia-cti",
             access_control="Private",
             notification_configuration=s3.CfnBucket.NotificationConfigurationProperty(
-                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(event_bridge_enabled=True)
+                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(
+                    event_bridge_enabled=True
+                )
             ),
             public_access_block_configuration=s3.CfnBucket.PublicAccessBlockConfigurationProperty(
                 block_public_acls=True,
@@ -74,8 +73,16 @@ class SekoiaCTIGuardDutyStack(Stack):
                 "Statement": [
                     {
                         "Effect": "Allow",
-                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-                        "Resource": "arn:aws:logs:" + self.region + ":" + self.account + ":log-group:/aws/lambda/*",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                        ],
+                        "Resource": "arn:aws:logs:"
+                        + self.region
+                        + ":"
+                        + self.account
+                        + ":log-group:/aws/lambda/*",
                     },
                     {
                         "Effect": "Allow",
@@ -113,8 +120,16 @@ class SekoiaCTIGuardDutyStack(Stack):
                 "Statement": [
                     {
                         "Effect": "Allow",
-                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-                        "Resource": "arn:aws:logs:" + self.region + ":" + self.account + ":log-group:/aws/lambda/*",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                        ],
+                        "Resource": "arn:aws:logs:"
+                        + self.region
+                        + ":"
+                        + self.account
+                        + ":log-group:/aws/lambda/*",
                     },
                     {
                         "Effect": "Allow",
@@ -129,7 +144,11 @@ class SekoiaCTIGuardDutyStack(Stack):
                             "guardduty:ListThreatIntelSets",
                             "guardduty:UpdateThreatIntelSet",
                         ],
-                        "Resource": "arn:aws:guardduty:" + self.region + ":" + self.account + ":detector/*",
+                        "Resource": "arn:aws:guardduty:"
+                        + self.region
+                        + ":"
+                        + self.account
+                        + ":detector/*",
                     },
                     {
                         "Effect": "Allow",
@@ -179,7 +198,8 @@ def handler(event, context):
             self,
             "UpdateSEKOIACTIGuardDuty",
             code=lambda_.CfnFunction.CodeProperty(
-                s3_bucket=my_bucket.bucket_name, s3_key="sekoia-update-cti-guardduty.zip"
+                s3_bucket=my_bucket.bucket_name,
+                s3_key="sekoia-update-cti-guardduty.zip",
             ),
             role=update_lambda_role.attr_arn,
             runtime="python3.7",
@@ -219,7 +239,9 @@ def handler(event, context):
                     "FunctionName": copy_lambda.function_name,
                     "InvocationType": "Event",
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("JobSenderTriggerPhysicalId"),
+                physical_resource_id=cr.PhysicalResourceId.of(
+                    "JobSenderTriggerPhysicalId"
+                ),
             ),
             on_update=cr.AwsSdkCall(
                 service="Lambda",
@@ -228,7 +250,9 @@ def handler(event, context):
                     "FunctionName": copy_lambda.function_name,
                     "InvocationType": "Event",
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("JobSenderTriggerPhysicalId"),
+                physical_resource_id=cr.PhysicalResourceId.of(
+                    "JobSenderTriggerPhysicalId"
+                ),
             ),
             function_name="CopyLambdaGuardDutyEvent",
         )
@@ -242,7 +266,11 @@ def handler(event, context):
             name="SEKOIALambdaSchedulerGuardDuty",
             state="ENABLED",
             schedule_expression="rate(30 minutes)",
-            targets=[events.CfnRule.TargetProperty(arn=update_lambda.attr_arn, id="UpdateSekoiaCTIGuardDuty")],
+            targets=[
+                events.CfnRule.TargetProperty(
+                    arn=update_lambda.attr_arn, id="UpdateSekoiaCTIGuardDuty"
+                )
+            ],
         )
 
         # GuardDuty
