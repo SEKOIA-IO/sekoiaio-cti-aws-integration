@@ -9,7 +9,7 @@
         "path": "Tree",
         "constructInfo": {
           "fqn": "constructs.Construct",
-          "version": "10.1.129"
+          "version": "10.1.131"
         }
       },
       "SekoiaCTINetworkFirewallStack": {
@@ -31,7 +31,7 @@
               "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
               "aws:cdk:cloudformation:props": {
                 "accessControl": "Private",
-                "bucketName": "sekoia-cti",
+                "bucketName": "sekoia-cti-network-firewall",
                 "notificationConfiguration": {
                   "eventBridgeConfiguration": {
                     "eventBridgeEnabled": true
@@ -319,7 +319,7 @@
                 },
                 "environment": {
                   "variables": {
-                    "BUCKET_NAME": "sekoia-cti"
+                    "BUCKET_NAME": "sekoia-cti-network-firewall"
                   }
                 },
                 "functionName": "CopySekoiaLambdaNetworkFirewall",
@@ -341,7 +341,7 @@
               "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
               "aws:cdk:cloudformation:props": {
                 "code": {
-                  "s3Bucket": "sekoia-cti",
+                  "s3Bucket": "sekoia-cti-network-firewall",
                   "s3Key": "sekoia-update-cti-network-firewall.zip"
                 },
                 "role": {
