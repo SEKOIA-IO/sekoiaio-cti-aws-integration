@@ -27,7 +27,7 @@ class SekoiaCTINetworkFirewallStack(Stack):
         my_bucket = s3.CfnBucket(
             self,
             "SEKOIA_CTI_Bucket",
-            bucket_name="sekoia-cti",
+            bucket_name="sekoia-cti-network-firewall",
             access_control="Private",
             notification_configuration=s3.CfnBucket.NotificationConfigurationProperty(
                 event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(

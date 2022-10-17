@@ -10,7 +10,7 @@
    "Type": "AWS::S3::Bucket",
    "Properties": {
     "AccessControl": "Private",
-    "BucketName": "sekoia-cti",
+    "BucketName": "sekoia-cti-network-firewall",
     "NotificationConfiguration": {
      "EventBridgeConfiguration": {
       "EventBridgeEnabled": true
@@ -266,7 +266,7 @@
     },
     "Environment": {
      "Variables": {
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": "sekoia-cti-network-firewall"
      }
     },
     "FunctionName": "CopySekoiaLambdaNetworkFirewall",
@@ -283,7 +283,7 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": "sekoia-cti",
+     "S3Bucket": "sekoia-cti-network-firewall",
      "S3Key": "sekoia-update-cti-network-firewall.zip"
     },
     "Role": {
