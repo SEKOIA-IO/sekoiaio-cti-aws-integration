@@ -14,7 +14,7 @@
    "Type": "AWS::S3::Bucket",
    "Properties": {
     "AccessControl": "Private",
-    "BucketName": "sekoia-cti",
+    "BucketName": "sekoia-cti-guardduty",
     "NotificationConfiguration": {
      "EventBridgeConfiguration": {
       "EventBridgeEnabled": true
@@ -257,7 +257,7 @@
     },
     "Environment": {
      "Variables": {
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": "sekoia-cti-guardduty"
      }
     },
     "FunctionName": "CopySekoiaLambdaGuardDuty",
@@ -274,7 +274,7 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": "sekoia-cti",
+     "S3Bucket": "sekoia-cti-guardduty",
      "S3Key": "sekoia-update-cti-guardduty.zip"
     },
     "Role": {
@@ -294,7 +294,7 @@
         "WebsiteURL"
        ]
       },
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": "sekoia-cti-guardduty"
      }
     },
     "FunctionName": "UpdateSekoiaCTIGuardDuty",
@@ -457,7 +457,7 @@
      "Ref": "DETECTORParameter"
     },
     "Format": "TXT",
-    "Location": "s3://sekoia-cti/intelset.txt",
+    "Location": "s3://sekoia-cti-guardduty/intelset.txt",
     "Name": "SEKOIA Threat Intel"
    },
    "Metadata": {

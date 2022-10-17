@@ -9,7 +9,7 @@
         "path": "Tree",
         "constructInfo": {
           "fqn": "constructs.Construct",
-          "version": "10.1.129"
+          "version": "10.1.131"
         }
       },
       "SekoiaCTIGuardDutyStack": {
@@ -39,7 +39,7 @@
               "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
               "aws:cdk:cloudformation:props": {
                 "accessControl": "Private",
-                "bucketName": "sekoia-cti",
+                "bucketName": "sekoia-cti-guardduty",
                 "notificationConfiguration": {
                   "eventBridgeConfiguration": {
                     "eventBridgeEnabled": true
@@ -307,7 +307,7 @@
                 },
                 "environment": {
                   "variables": {
-                    "BUCKET_NAME": "sekoia-cti"
+                    "BUCKET_NAME": "sekoia-cti-guardduty"
                   }
                 },
                 "functionName": "CopySekoiaLambdaGuardDuty",
@@ -329,7 +329,7 @@
               "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
               "aws:cdk:cloudformation:props": {
                 "code": {
-                  "s3Bucket": "sekoia-cti",
+                  "s3Bucket": "sekoia-cti-guardduty",
                   "s3Key": "sekoia-update-cti-guardduty.zip"
                 },
                 "role": {
@@ -349,7 +349,7 @@
                         "WebsiteURL"
                       ]
                     },
-                    "BUCKET_NAME": "sekoia-cti"
+                    "BUCKET_NAME": "sekoia-cti-guardduty"
                   }
                 },
                 "functionName": "UpdateSekoiaCTIGuardDuty",
@@ -597,7 +597,7 @@
                   "Ref": "DETECTORParameter"
                 },
                 "format": "TXT",
-                "location": "s3://sekoia-cti/intelset.txt",
+                "location": "s3://sekoia-cti-guardduty/intelset.txt",
                 "name": "SEKOIA Threat Intel"
               }
             },
