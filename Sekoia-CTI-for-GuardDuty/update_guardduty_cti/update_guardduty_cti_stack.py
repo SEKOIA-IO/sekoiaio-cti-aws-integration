@@ -29,21 +29,10 @@ class SekoiaCTIGuardDutyStack(Stack):
             description="Please enter your DetectorId. You can find it in GuardDuty parameter once GuardDuty is enabled.",
         )
 
-        # S3
-        my_bucket = s3.CfnBucket(
+        parameter_BUCKET = cdk.CfnParameter(
             self,
-            "SEKOIA_CTI_Bucket",
-            bucket_name="sekoia-cti",
-            access_control="Private",
-            notification_configuration=s3.CfnBucket.NotificationConfigurationProperty(
-                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(event_bridge_enabled=True)
-            ),
-            public_access_block_configuration=s3.CfnBucket.PublicAccessBlockConfigurationProperty(
-                block_public_acls=True,
-                block_public_policy=True,
-                ignore_public_acls=True,
-                restrict_public_buckets=True,
-            ),
+            "BUCKETParameter",
+            description="Please enter your Bucket ARN. One of your own bucket where the lambda code and the intelligence will be stored.",
         )
 
         # IAM & Policies
@@ -80,11 +69,12 @@ class SekoiaCTIGuardDutyStack(Stack):
                     {
                         "Effect": "Allow",
                         "Action": ["s3:GetObject", "s3:PutObject"],
-                        "Resource": my_bucket.attr_arn + "/*",
+                        "Resource": "arn:aws:s3:::" + parameter_BUCKET.value_as_string + "/*",
                     },
                 ],
             },
         )
+        copy_lambda_policy.add_depends_on(copy_lambda_role)
 
         update_lambda_role = iam.CfnRole(
             self,
@@ -119,7 +109,7 @@ class SekoiaCTIGuardDutyStack(Stack):
                     {
                         "Effect": "Allow",
                         "Action": ["s3:GetObject", "s3:PutObject"],
-                        "Resource": my_bucket.attr_arn + "/*",
+                        "Resource": "arn:aws:s3:::" + parameter_BUCKET.value_as_string + "/*",
                     },
                     {
                         "Effect": "Allow",
@@ -144,6 +134,7 @@ class SekoiaCTIGuardDutyStack(Stack):
                 ],
             },
         )
+        update_lambda_policy.add_depends_on(update_lambda_role)
 
         # Lambda
         copy_lambda = lambda_.CfnFunction(
@@ -170,7 +161,7 @@ def handler(event, context):
             function_name="CopySekoiaLambdaGuardDuty",
             environment=lambda_.CfnFunction.EnvironmentProperty(
                 variables={
-                    "BUCKET_NAME": my_bucket.bucket_name,
+                    "BUCKET_NAME": parameter_BUCKET.value_as_string,
                 }
             ),
             timeout=10,
@@ -179,7 +170,7 @@ def handler(event, context):
             self,
             "UpdateSEKOIACTIGuardDuty",
             code=lambda_.CfnFunction.CodeProperty(
-                s3_bucket=my_bucket.bucket_name, s3_key="sekoia-update-cti-guardduty.zip"
+                s3_bucket=parameter_BUCKET.value_as_string, s3_key="sekoia-update-cti-guardduty.zip"
             ),
             role=update_lambda_role.attr_arn,
             runtime="python3.7",
@@ -189,8 +180,7 @@ def handler(event, context):
             environment=lambda_.CfnFunction.EnvironmentProperty(
                 variables={
                     "API_KEY": parameter_APIKEY.value_as_string,
-                    "BUCKET_ENDPOINT": my_bucket.attr_website_url,
-                    "BUCKET_NAME": my_bucket.bucket_name,
+                    "BUCKET_NAME": parameter_BUCKET.value_as_string,
                 }
             ),
             timeout=20,
@@ -252,7 +242,7 @@ def handler(event, context):
             activate=False,
             detector_id=parameter_DETECTOR.value_as_string,
             format="TXT",
-            location=f"s3://{my_bucket.bucket_name}/intelset.txt",
+            location=f"s3://{parameter_BUCKET.value_as_string}/intelset.txt",
             name="SEKOIA Threat Intel",
         )
 

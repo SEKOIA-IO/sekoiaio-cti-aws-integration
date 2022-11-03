@@ -3,30 +3,13 @@
   "APIKEYParameter": {
    "Type": "String",
    "Description": "Please enter the SEKOIA.IO API KEY. It is provided by SEKOIA.IO at subscription."
+  },
+  "BUCKETParameter": {
+   "Type": "String",
+   "Description": "Please enter your Bucket name. One of your own bucket where the lambda code  will be stored."
   }
  },
  "Resources": {
-  "SEKOIACTIBucket": {
-   "Type": "AWS::S3::Bucket",
-   "Properties": {
-    "AccessControl": "Private",
-    "BucketName": "sekoia-cti",
-    "NotificationConfiguration": {
-     "EventBridgeConfiguration": {
-      "EventBridgeEnabled": true
-     }
-    },
-    "PublicAccessBlockConfiguration": {
-     "BlockPublicAcls": true,
-     "BlockPublicPolicy": true,
-     "IgnorePublicAcls": true,
-     "RestrictPublicBuckets": true
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SekoiaCTINetworkFirewallStack/SEKOIA_CTI_Bucket"
-   }
-  },
   "CopySekoiaLambdaNetworkFirewallRole": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -89,11 +72,9 @@
         "Fn::Join": [
          "",
          [
+          "arn:aws:s3:::",
           {
-           "Fn::GetAtt": [
-            "SEKOIACTIBucket",
-            "Arn"
-           ]
+           "Ref": "BUCKETParameter"
           },
           "/*"
          ]
@@ -107,6 +88,9 @@
      "CopySekoiaLambdaNetworkFirewallRole"
     ]
    },
+   "DependsOn": [
+    "CopySekoiaLambdaNetworkFirewallRole"
+   ],
    "Metadata": {
     "aws:cdk:path": "SekoiaCTINetworkFirewallStack/CopySekoiaLambdaNetworkFirewallPolicy"
    }
@@ -266,7 +250,9 @@
     },
     "Environment": {
      "Variables": {
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": {
+       "Ref": "BUCKETParameter"
+      }
      }
     },
     "FunctionName": "CopySekoiaLambdaNetworkFirewall",
@@ -283,7 +269,9 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": "sekoia-cti",
+     "S3Bucket": {
+      "Ref": "BUCKETParameter"
+     },
      "S3Key": "sekoia-update-cti-network-firewall.zip"
     },
     "Role": {

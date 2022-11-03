@@ -9,7 +9,7 @@
         "path": "Tree",
         "constructInfo": {
           "fqn": "constructs.Construct",
-          "version": "10.1.129"
+          "version": "10.1.148"
         }
       },
       "SekoiaCTINetworkFirewallStack": {
@@ -24,29 +24,11 @@
               "version": "2.43.0"
             }
           },
-          "SEKOIA_CTI_Bucket": {
-            "id": "SEKOIA_CTI_Bucket",
-            "path": "SekoiaCTINetworkFirewallStack/SEKOIA_CTI_Bucket",
-            "attributes": {
-              "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
-              "aws:cdk:cloudformation:props": {
-                "accessControl": "Private",
-                "bucketName": "sekoia-cti",
-                "notificationConfiguration": {
-                  "eventBridgeConfiguration": {
-                    "eventBridgeEnabled": true
-                  }
-                },
-                "publicAccessBlockConfiguration": {
-                  "blockPublicAcls": true,
-                  "blockPublicPolicy": true,
-                  "ignorePublicAcls": true,
-                  "restrictPublicBuckets": true
-                }
-              }
-            },
+          "BUCKETParameter": {
+            "id": "BUCKETParameter",
+            "path": "SekoiaCTINetworkFirewallStack/BUCKETParameter",
             "constructInfo": {
-              "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+              "fqn": "aws-cdk-lib.CfnParameter",
               "version": "2.43.0"
             }
           },
@@ -120,11 +102,9 @@
                         "Fn::Join": [
                           "",
                           [
+                            "arn:aws:s3:::",
                             {
-                              "Fn::GetAtt": [
-                                "SEKOIACTIBucket",
-                                "Arn"
-                              ]
+                              "Ref": "BUCKETParameter"
                             },
                             "/*"
                           ]
@@ -319,7 +299,9 @@
                 },
                 "environment": {
                   "variables": {
-                    "BUCKET_NAME": "sekoia-cti"
+                    "BUCKET_NAME": {
+                      "Ref": "BUCKETParameter"
+                    }
                   }
                 },
                 "functionName": "CopySekoiaLambdaNetworkFirewall",
@@ -341,7 +323,9 @@
               "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
               "aws:cdk:cloudformation:props": {
                 "code": {
-                  "s3Bucket": "sekoia-cti",
+                  "s3Bucket": {
+                    "Ref": "BUCKETParameter"
+                  },
                   "s3Key": "sekoia-update-cti-network-firewall.zip"
                 },
                 "role": {

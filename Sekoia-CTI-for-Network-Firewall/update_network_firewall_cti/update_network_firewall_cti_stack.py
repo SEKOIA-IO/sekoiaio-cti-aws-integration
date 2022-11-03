@@ -23,21 +23,10 @@ class SekoiaCTINetworkFirewallStack(Stack):
             description="Please enter the SEKOIA.IO API KEY. It is provided by SEKOIA.IO at subscription.",
         )
 
-        # S3
-        my_bucket = s3.CfnBucket(
+        parameter_BUCKET = cdk.CfnParameter(
             self,
-            "SEKOIA_CTI_Bucket",
-            bucket_name="sekoia-cti",
-            access_control="Private",
-            notification_configuration=s3.CfnBucket.NotificationConfigurationProperty(
-                event_bridge_configuration=s3.CfnBucket.EventBridgeConfigurationProperty(event_bridge_enabled=True)
-            ),
-            public_access_block_configuration=s3.CfnBucket.PublicAccessBlockConfigurationProperty(
-                block_public_acls=True,
-                block_public_policy=True,
-                ignore_public_acls=True,
-                restrict_public_buckets=True,
-            ),
+            "BUCKETParameter",
+            description="Please enter your Bucket name. One of your own bucket where the lambda code  will be stored.",
         )
 
         # IAM & Policies
@@ -74,11 +63,12 @@ class SekoiaCTINetworkFirewallStack(Stack):
                     {
                         "Effect": "Allow",
                         "Action": ["s3:GetObject", "s3:PutObject"],
-                        "Resource": my_bucket.attr_arn + "/*",
+                        "Resource": "arn:aws:s3:::" + parameter_BUCKET.value_as_string + "/*",
                     },
                 ],
             },
         )
+        copy_lambda_policy.add_depends_on(copy_lambda_role)
         
         update_lambda_role = iam.CfnRole(
             self,
@@ -186,7 +176,7 @@ def handler(event, context):
             function_name="CopySekoiaLambdaNetworkFirewall",
             environment=lambda_.CfnFunction.EnvironmentProperty(
                 variables={
-                    "BUCKET_NAME": my_bucket.bucket_name,
+                    "BUCKET_NAME": parameter_BUCKET.value_as_string,
                 }
             ),
             timeout=10,
@@ -195,7 +185,7 @@ def handler(event, context):
             self,
             "UpdateSEKOIACTINetworkFirewall",
             code=lambda_.CfnFunction.CodeProperty(
-                s3_bucket=my_bucket.bucket_name, s3_key="sekoia-update-cti-network-firewall.zip"
+                s3_bucket=parameter_BUCKET.value_as_string, s3_key="sekoia-update-cti-network-firewall.zip"
             ),
             role=update_lambda_role.attr_arn,
             runtime="python3.7",

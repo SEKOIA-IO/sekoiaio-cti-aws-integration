@@ -7,30 +7,13 @@
   "DETECTORParameter": {
    "Type": "String",
    "Description": "Please enter your DetectorId. You can find it in GuardDuty parameter once GuardDuty is enabled."
+  },
+  "BUCKETParameter": {
+   "Type": "String",
+   "Description": "Please enter your Bucket ARN. One of your own bucket where the lambda code and the intelligence will be stored."
   }
  },
  "Resources": {
-  "SEKOIACTIBucket": {
-   "Type": "AWS::S3::Bucket",
-   "Properties": {
-    "AccessControl": "Private",
-    "BucketName": "sekoia-cti",
-    "NotificationConfiguration": {
-     "EventBridgeConfiguration": {
-      "EventBridgeEnabled": true
-     }
-    },
-    "PublicAccessBlockConfiguration": {
-     "BlockPublicAcls": true,
-     "BlockPublicPolicy": true,
-     "IgnorePublicAcls": true,
-     "RestrictPublicBuckets": true
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SekoiaCTIGuardDutyStack/SEKOIA_CTI_Bucket"
-   }
-  },
   "CopySekoiaLambdaGuardDutyRole": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -93,11 +76,9 @@
         "Fn::Join": [
          "",
          [
+          "arn:aws:s3:::",
           {
-           "Fn::GetAtt": [
-            "SEKOIACTIBucket",
-            "Arn"
-           ]
+           "Ref": "BUCKETParameter"
           },
           "/*"
          ]
@@ -111,6 +92,9 @@
      "CopySekoiaLambdaGuardDutyRole"
     ]
    },
+   "DependsOn": [
+    "CopySekoiaLambdaGuardDutyRole"
+   ],
    "Metadata": {
     "aws:cdk:path": "SekoiaCTIGuardDutyStack/CopySekoiaLambdaGuardDutyPolicy"
    }
@@ -177,11 +161,9 @@
         "Fn::Join": [
          "",
          [
+          "arn:aws:s3:::",
           {
-           "Fn::GetAtt": [
-            "SEKOIACTIBucket",
-            "Arn"
-           ]
+           "Ref": "BUCKETParameter"
           },
           "/*"
          ]
@@ -239,6 +221,9 @@
      "UpdateSekoiaCTIGuardDutyRole"
     ]
    },
+   "DependsOn": [
+    "UpdateSekoiaCTIGuardDutyRole"
+   ],
    "Metadata": {
     "aws:cdk:path": "SekoiaCTIGuardDutyStack/UpdateSekoiaCTIGuardDutyPolicy"
    }
@@ -257,7 +242,9 @@
     },
     "Environment": {
      "Variables": {
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": {
+       "Ref": "BUCKETParameter"
+      }
      }
     },
     "FunctionName": "CopySekoiaLambdaGuardDuty",
@@ -274,7 +261,9 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": "sekoia-cti",
+     "S3Bucket": {
+      "Ref": "BUCKETParameter"
+     },
      "S3Key": "sekoia-update-cti-guardduty.zip"
     },
     "Role": {
@@ -288,13 +277,9 @@
       "API_KEY": {
        "Ref": "APIKEYParameter"
       },
-      "BUCKET_ENDPOINT": {
-       "Fn::GetAtt": [
-        "SEKOIACTIBucket",
-        "WebsiteURL"
-       ]
-      },
-      "BUCKET_NAME": "sekoia-cti"
+      "BUCKET_NAME": {
+       "Ref": "BUCKETParameter"
+      }
      }
     },
     "FunctionName": "UpdateSekoiaCTIGuardDuty",
@@ -457,7 +442,18 @@
      "Ref": "DETECTORParameter"
     },
     "Format": "TXT",
-    "Location": "s3://sekoia-cti/intelset.txt",
+    "Location": {
+     "Fn::Join": [
+      "",
+      [
+       "s3://",
+       {
+        "Ref": "BUCKETParameter"
+       },
+       "/intelset.txt"
+      ]
+     ]
+    },
     "Name": "SEKOIA Threat Intel"
    },
    "Metadata": {

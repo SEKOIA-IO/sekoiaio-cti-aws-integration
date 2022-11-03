@@ -14,7 +14,7 @@
         }
       }
     },
-    "9d9735193a57e89d74ae69d0daed9ba07c143591f9265809f0a8d5234bc7e4a8": {
+    "d4a93ae97379cba0a79c8ffc887657605502c3959ad3836046ae310fdb9d466a": {
       "source": {
         "path": "SekoiaCTINetworkFirewallStack.template.json",
         "packaging": "file"
@@ -22,7 +22,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "9d9735193a57e89d74ae69d0daed9ba07c143591f9265809f0a8d5234bc7e4a8.json",
+          "objectKey": "d4a93ae97379cba0a79c8ffc887657605502c3959ad3836046ae310fdb9d466a.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

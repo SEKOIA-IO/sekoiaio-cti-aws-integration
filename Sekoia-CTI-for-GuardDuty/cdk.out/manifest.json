@@ -23,7 +23,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/af000486bf2ce54a90506b70c0f4f37e992a8ed73aaebb9a0b60b16e82d3616a.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/0134f1b357aa4729913793ac69615ee9946a59f8fb97d10d5398a8f8b9b04996.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -51,10 +51,10 @@
             "data": "DETECTORParameter"
           }
         ],
-        "/SekoiaCTIGuardDutyStack/SEKOIA_CTI_Bucket": [
+        "/SekoiaCTIGuardDutyStack/BUCKETParameter": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "SEKOIACTIBucket"
+            "data": "BUCKETParameter"
           }
         ],
         "/SekoiaCTIGuardDutyStack/CopySekoiaLambdaGuardDutyRole": [

@@ -27,16 +27,16 @@ def handler(event, context):
     feed_list = r.text.split("\n")
     feed_list.pop()  # Last item is empty
     logging.getLogger().debug(f"Feed_list: {feed_list}")
-    logging.getLogger().debug(f"Feed_list length: {len(feed_list)}")
+    logging.getLogger().info(f"Feed_list length: {len(feed_list)}")
     feed_set = set(feed_list)
     logging.getLogger().debug(f"Feed_set: {feed_set}")
-    logging.getLogger().debug(f"Feed_set length: {len(feed_set)}")
+    logging.getLogger().info(f"Feed_set length: {len(feed_set)}")
     feed_list_unique = list(feed_set)
     logging.getLogger().debug(f"Feed_list_unique: {feed_list_unique}")
-    logging.getLogger().debug(f"Feed_list_unique length: {len(feed_list_unique)}")
+    logging.getLogger().info(f"Feed_list_unique length: {len(feed_list_unique)}")
     feed_list_unique_without_unicode = [indicator for indicator in feed_list_unique if "xn--" not in indicator]
-    logging.getLogger().debug(f"Feed_list_unique_without_unicode: {feed_list_unique_without_unicode}")
-    logging.getLogger().debug(f"Feed_list_unique_without_unicode length: {len(feed_list_unique_without_unicode)}")
+    logging.getLogger().info(f"Feed_list_unique_without_unicode: {feed_list_unique_without_unicode}")
+    logging.getLogger().info(f"Feed_list_unique_without_unicode length: {len(feed_list_unique_without_unicode)}")
 
     # Update Firewall Network
     logging.getLogger().info("Starting to update Firewall Network")

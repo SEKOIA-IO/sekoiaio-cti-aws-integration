@@ -4,6 +4,7 @@ import boto3
 import os
 import logging
 
+
 def handler(event, context):
 
     # Set logging
@@ -20,13 +21,14 @@ def handler(event, context):
 
     # Get SEKOIA.IO CTI
     logging.getLogger().info("Preparing request to SEKOIA.IO")
-    headers = {"Accept": "application/json", "Authorization": f"Bearer {API_KEY}"}
+    headers = {"Accept": "application/txt", "Authorization": f"Bearer {API_KEY}"}
     endpoint_ipv4 = "https://app.sekoia.io/v1/aws-gateway/ipv4"
 
     logging.getLogger().info("Requesting CTI from SEKOIA.IO")
     r = requests.get(f"{endpoint_ipv4}", headers=headers)
+    logging.getLogger().info(f"Request result: {r.status_code}")
     feed = r.text
-    file_name="sekoia-cti-ipv4.txt"
+    file_name = "sekoia-cti-ipv4.txt"
     logging.getLogger().info(f"Writing CTI file to /tmp/{file_name}")
     with open(f"/tmp/{file_name}", "w") as fo:
         fo.write(feed)
@@ -36,76 +38,47 @@ def handler(event, context):
     logging.getLogger().info("Uploading CTI file to S3")
     s3.upload_file(f"/tmp/{file_name}", BUCKET_NAME, file_name)
 
-    
     # Update GuardDuty
-    logging.getLogger().info("Starting to upload GuardDuty")
+    logging.getLogger().info("Starting to update GuardDuty")
     location = f"https://s3.amazonaws.com/{BUCKET_NAME}/{file_name}"
     ThreatIntel_name = "SEKOIA Threat Intel"
-    guardduty = boto3.client('guardduty')
+    guardduty = boto3.client("guardduty")
     logging.getLogger().info("Listing GuardDuty Detectors")
     response = guardduty.list_detectors()
 
-    if len(response['DetectorIds']) == 0:
-        raise Exception('Failed to read GuardDuty info. Please check if the service is activated')
+    if len(response["DetectorIds"]) == 0:
+        raise Exception("Failed to read GuardDuty info. Please check if the service is activated")
 
     detector_id = response["DetectorIds"][0]
+    logging.getLogger().info(f"Detector_id:{detector_id}")
+
     try:
-        logging.getLogger().info("Creating GuardDuty ThreatIntelSets")
-        response = guardduty.create_threat_intel_set(
-            Activate=True,
-            DetectorId=detectorId,
-            Location=location,
-            Name=ThreatIntel_name
-        )
-    except Exception as error:
-        if "name already exists" in error.message:
-            found = False
-            logging.getLogger().info("Listing GuardDuty ThreatIntelSets")
-            response = guardduty.list_threat_intel_sets(DetectorId=detectorId)
-            for setId in response['ThreatIntelSetIds']:
-                response = guardduty.get_threat_intel_set(DetectorId=detectorId, ThreatIntelSetId=setId)
-                if (ThreatIntel_name == response['Name']):
-                    found = True
-                    logging.getLogger().info("Updating GuardDuty ThreatIntelSets")
-                    response = guardduty.update_threat_intel_set(
-                        Activate=True,
-                        DetectorId=detectorId,
-                        Location=location,
-                        Name=ThreatIntel_name,
-                        ThreatIntelSetId=setId
-                    )
-                    break
+        found = False
+        response = guardduty.list_threat_intel_sets(DetectorId=detector_id)
+        logging.getLogger().info("Listing for Sekoia ThreatIntelSet")
+        logging.getLogger().info(f"Response: {response}")
 
-            if not found:
-                raise
-
-        elif "AWS account limits" in error.message:
-            #--------------------------------------------------------------
-            # Limit reached. Try to rotate the oldest one
-            #--------------------------------------------------------------
-            oldestDate = None
-            oldestID = None
-            response = guardduty.list_threat_intel_sets(DetectorId=detectorId)
-            for setId in response['ThreatIntelSetIds']:
-                response = guardduty.get_threat_intel_set(DetectorId=detectorId, ThreatIntelSetId=setId)
-                tmpName = response['Name']
-
-                if tmpName.startswith('TF-'):
-                    setDate = datetime.strptime(tmpName.split('-')[-1], "%Y%m%d")
-                    if oldestDate == None or setDate < oldestDate:
-                        oldestDate = setDate
-                        oldestID = setId
-
-            if oldestID != None:
+        for setId in response["ThreatIntelSetIds"]:
+            response = guardduty.get_threat_intel_set(DetectorId=detector_id, ThreatIntelSetId=setId)
+            logging.getLogger().info(f"Getting {ThreatIntel_name}")
+            logging.getLogger().info(f"Response: {response}")
+            if ThreatIntel_name == response["Name"]:
+                found = True
+                logging.getLogger().info("Updating GuardDuty ThreatIntelSets")
                 response = guardduty.update_threat_intel_set(
                     Activate=True,
-                    DetectorId=detectorId,
+                    DetectorId=detector_id,
                     Location=location,
                     Name=ThreatIntel_name,
-                    ThreatIntelSetId=oldestID
+                    ThreatIntelSetId=setId,
                 )
-            else:
-                raise
+                logging.getLogger().info(f"Response: {response}")
+                break
 
-        else:
-            raise 
+        if not found:
+            raise
+
+        logging.getLogger().info("Ending in success!")
+
+    except Exception as error:
+        logging.getLogger().error(f"Ending in error: {error}")

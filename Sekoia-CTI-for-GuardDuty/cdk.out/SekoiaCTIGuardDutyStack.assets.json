@@ -14,7 +14,7 @@
         }
       }
     },
-    "af000486bf2ce54a90506b70c0f4f37e992a8ed73aaebb9a0b60b16e82d3616a": {
+    "0134f1b357aa4729913793ac69615ee9946a59f8fb97d10d5398a8f8b9b04996": {
       "source": {
         "path": "SekoiaCTIGuardDutyStack.template.json",
         "packaging": "file"
@@ -22,7 +22,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "af000486bf2ce54a90506b70c0f4f37e992a8ed73aaebb9a0b60b16e82d3616a.json",
+          "objectKey": "0134f1b357aa4729913793ac69615ee9946a59f8fb97d10d5398a8f8b9b04996.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }
