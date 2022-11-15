@@ -20,7 +20,7 @@ def handler(event, context):
     # Get SEKOIA.IO CTI
     logging.getLogger().info("Preparing request to SEKOIA.IO")
     headers = {"Accept": "application/json", "Authorization": f"Bearer {API_KEY}"}
-    endpoint = "https://app.sekoia.io/v1/aws-gateway/domain-name"
+    endpoint = "https://app.sekoia.io/v1/edl-gateway/domain-name"
 
     logging.getLogger().info("Requesting CTI from SEKOIA.IO")
     r = requests.get(f"{endpoint}", headers=headers)

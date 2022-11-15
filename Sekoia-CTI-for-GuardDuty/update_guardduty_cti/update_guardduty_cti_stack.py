@@ -147,7 +147,7 @@ import requests
 import os
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 def handler(event, context):
-    r = requests.get("https://raw.githubusercontent.com/maxime-el-haddari/testing-lambda/main/sekoia-update-cti-guardduty.zip")
+    r = requests.get("https://raw.githubusercontent.com/SEKOIA-IO/sekoiaio-cti-aws-integration/main/lambda/sekoia-update-cti-guardduty.zip")
     with open("/tmp/sekoia-update-cti-guardduty.zip", "wb") as f:
         f.write(r.content)
     s3_client = boto3.client("s3")
