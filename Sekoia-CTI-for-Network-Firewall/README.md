@@ -42,7 +42,7 @@ At this point, we've created firewall rules for you. You'll need to update your 
 ## Caveats
 
 WIP 
-- Unicode domaine names
+- Unicode domain names
 - AWS 30K limitations
 
 
