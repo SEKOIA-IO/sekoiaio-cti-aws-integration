@@ -1,58 +1,62 @@
+# Overview
 
-# Welcome to your CDK Python project!
+This AWS Cloud Development Kit will allow you to automatically create Network Firewall rules with Sekoia.io's Threat Intel IoCs (domain names).
 
-This is a blank project for CDK development with Python.
+## What you will need
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- A AWS S3 bucket
+- A Sekoia.io account with an INTEL plan
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+## Installation
 
-To manually create a virtualenv on MacOS and Linux:
+Install the Cloud Development kit <https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html>
 
+If needed install the aws-cli <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html>
+
+Clone this repository
 ```
-$ python3 -m venv .venv
-```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
-```
-$ source .venv/bin/activate
+git clone https://github.com/SEKOIA-IO/sekoiaio-cti-aws-integration.git
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+Change directory
+```
+cd sekoiaio-cti-aws-integration/Sekoia-CTI-for-Network-Firewall
+```
 
+Bootstrap
 ```
-% .venv\Scripts\activate.bat
+aws configure
+cdk bootstrap
 ```
 
-Once the virtualenv is activated, you can install the required dependencies.
+Deploy
+```
+cdk deploy --parameters APIKEYParameter=${APIKEY} --parameters BUCKETParameter=my-bucket
+```
 
-```
-$ pip install -r requirements.txt
-```
+## What's next
+
+At this point, we've created firewall rules for you. You'll need to update your firewall configuration to use them.
+
+
+## Caveats
+
+WIP 
+- Unicode domain names
+- AWS 30K limitations
+
+
+## Miscs
 
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
-$ cdk synth
+cdk synth
 ```
+### Useful commands
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+- `cdk ls`          list all stacks in the app
+- `cdk synth`       emits the synthesized CloudFormation template
+- `cdk deploy`      deploy this stack to your default AWS account/region
+- `cdk diff`        compare deployed stack with current state
+- `cdk docs`        open CDK documentation
