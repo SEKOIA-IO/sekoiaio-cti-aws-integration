@@ -242,7 +242,7 @@ def handler(event, context):
             activate=False,
             detector_id=parameter_DETECTOR.value_as_string,
             format="TXT",
-            location=f"s3://{parameter_BUCKET.value_as_string}/intelset.txt",
+            location=f"s3://{parameter_BUCKET.value_as_string}/sekoia-cti-ipv4.txt",
             name="SEKOIA Threat Intel",
         )
 
