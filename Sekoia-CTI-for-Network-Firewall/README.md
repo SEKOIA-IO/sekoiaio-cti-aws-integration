@@ -23,9 +23,10 @@ Change directory
 cd sekoiaio-cti-aws-integration/Sekoia-CTI-for-Network-Firewall
 ```
 
-Create the virtual env
+Create the virtual env and install dependencies
 ```
 python3 -m venv .venv && source .venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 Bootstrap
