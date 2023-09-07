@@ -23,6 +23,11 @@ Change directory
 cd sekoiaio-cti-aws-integration/Sekoia-CTI-for-Network-Firewall
 ```
 
+Create the virtual env
+```
+python3 -m venv .venv && source .venv/bin/activate
+```
+
 Bootstrap
 ```
 aws configure
