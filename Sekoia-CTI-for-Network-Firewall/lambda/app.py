@@ -28,17 +28,12 @@ def handler(event, context):
     feed_list.pop()  # Last item is empty
     logging.getLogger().debug(f"Feed_list: {feed_list}")
     logging.getLogger().info(f"Feed_list length: {len(feed_list)}")
-    feed_set = set(feed_list)
-    logging.getLogger().debug(f"Feed_set: {feed_set}")
-    logging.getLogger().info(f"Feed_set length: {len(feed_set)}")
-    feed_list_unique = list(feed_set)
-    logging.getLogger().debug(f"Feed_list_unique: {feed_list_unique}")
-    logging.getLogger().info(f"Feed_list_unique length: {len(feed_list_unique)}")
-    feed_list_unique_without_unicode = [indicator for indicator in feed_list_unique if "xn--" not in indicator]
-    logging.getLogger().info(f"Feed_list_unique_without_unicode: {feed_list_unique_without_unicode}")
-    logging.getLogger().info(f"Feed_list_unique_without_unicode length: {len(feed_list_unique_without_unicode)}")
+    # We filter all domain name containing "_" because AWS Network Firewall consider them invalid.
+    filtered_feed_list = [indicator for indicator in feed_list if "_" not in indicator]
+    logging.getLogger().debug(f"Feed_list_unique_without_unicode: {filtered_feed_list}")
+    logging.getLogger().info(f"Feed_list_unique_without_unicode length: {len(filtered_feed_list)}")
 
-    # Update Firewall Network
+    # Update Network Firewall
     logging.getLogger().info("Starting to update Firewall Network")
     rule_group_name = "SekoiaCTIDomainNameRuleGroup"
     netfw = boto3.client("network-firewall")
@@ -47,13 +42,14 @@ def handler(event, context):
     update_token = response["UpdateToken"]
     logging.getLogger().debug(f"UpdateToken: {update_token}")
     logging.getLogger().info(f"Updating {rule_group_name}")
+    # We limit to 30000 first indicators due to AWS Network Firewall limitation.
     response = netfw.update_rule_group(
         UpdateToken=update_token,
         RuleGroupName=rule_group_name,
         RuleGroup={
             "RulesSource": {
                 "RulesSourceList": {
-                    "Targets": feed_list_unique_without_unicode,
+                    "Targets": filtered_feed_list[:30000],
                     "TargetTypes": ["TLS_SNI"],
                     "GeneratedRulesType": "DENYLIST",
                 }
@@ -61,4 +57,4 @@ def handler(event, context):
         },
         Type="STATEFUL",
     )
-    logging.getLogger().info("Updating {rule_group_name} is a success")
+    logging.getLogger().info("Updating {rule_group_name} is done.")
