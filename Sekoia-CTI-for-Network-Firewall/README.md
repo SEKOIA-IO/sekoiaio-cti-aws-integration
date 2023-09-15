@@ -30,6 +30,7 @@ python3 -m venv .venv && source .venv/bin/activate
 
 Bootstrap
 ```
+pip install -r requirements.txt
 aws configure
 cdk bootstrap
 ```
@@ -47,7 +48,6 @@ At this point, we've created firewall rules for you. You'll need to update your 
 ## Caveats
 
 WIP 
-- Unicode domain names
 - AWS 30K limitations
 
 ## Useful commands
