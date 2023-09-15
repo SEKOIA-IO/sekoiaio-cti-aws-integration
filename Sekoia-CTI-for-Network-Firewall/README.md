@@ -31,7 +31,6 @@ pip3 install -r requirements.txt
 
 Bootstrap
 ```
-pip install -r requirements.txt
 aws configure
 cdk bootstrap
 ```
